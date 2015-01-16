@@ -18,6 +18,8 @@ badpcrs <- binarize(adpcrs)
 #                                      "wilson")[, 4L:6])
 
 
+test_example <- test_counts(badpcrs)
+
 #naive approach
 positives <- colSums(badpcrs)
 total <- slot(badpcrs, "n")
@@ -28,11 +30,21 @@ all_combns <- apply(test_ids, 2, function(i)
 p_vals <- p.adjust(sapply(all_combns, function(i)
   i[["p.value"]]), method = "BH")
 
+statistics <- sapply(all_combns, function(i)
+  i[["statistic"]])
+#t_res in original test_counts
+x_res <- data.frame(X_squared = statistics, p_value = p_vals,
+                    row.names = apply(matrix(names(positives)[test_ids], ncol = 2, byrow= TRUE),
+                                      1, function(i) paste(i, collapse = " - ")))
+
+
+
 #res <- t(rbind(test_ids, p_vals > 0.05))
 
 only_signif <- test_ids[, p_vals > 0.05]
 groups <- unique(lapply(1L:length(total), function(i)
   sort(unique(as.vector(only_signif[, as.logical(colSums(only_signif == i))])))))
+
 
 
 #http://www.stat.ufl.edu/~aa/articles/agresti_bini_bertaccini_ryu_2008.pdf
