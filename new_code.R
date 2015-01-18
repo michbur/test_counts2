@@ -11,11 +11,7 @@ badpcrs <- binarize(adpcrs)
 
 
 
-# p_val <- p.adjust(rep(0.05, ncol(badpcrs)), "BH") 
-# conf_ints <- dpcR:::fl(binom.confint(colSums(badpcrs), 
-#                                      slot(badpcrs, "n"), 
-#                                      conf.level = 1 - p_val[1],
-#                                      "wilson")[, 4L:6])
+
 
 
 test_example <- test_counts(badpcrs)
@@ -37,6 +33,11 @@ x_res <- data.frame(X_squared = statistics, p_value = p_vals,
                     row.names = apply(matrix(names(positives)[test_ids], ncol = 2, byrow= TRUE),
                                       1, function(i) paste(i, collapse = " - ")))
 
+p_val <- p.adjust(rep(0.05, ncol(badpcrs)), "BH") 
+conf_ints <- dpcR:::fl(binom.confint(colSums(badpcrs), 
+                        slot(badpcrs, "n"), 
+                        conf.level = 1 - p.adjust(rep(0.05, ncol(badpcrs)), "BH")[1],
+                        "wilson")[, 4L:6])
 
 
 #res <- t(rbind(test_ids, p_vals > 0.05))
@@ -45,7 +46,10 @@ only_signif <- test_ids[, p_vals > 0.05]
 groups <- unique(lapply(1L:length(total), function(i)
   sort(unique(as.vector(only_signif[, as.logical(colSums(only_signif == i))])))))
 
+group_matrix <- sapply(1L:length(total), function(experiment) 
+  sapply(groups, function(single_group) experiment %in% single_group))
 
+dimnames(group_matrix) <- list(letters[1L:length(groups)], names(positives))
 
 #http://www.stat.ufl.edu/~aa/articles/agresti_bini_bertaccini_ryu_2008.pdf
 #http://www.stat.ufl.edu/~aa/cda/R/multcomp/ryu-simultaneous.pdf
