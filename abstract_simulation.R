@@ -16,3 +16,5 @@ sim_dat <- lapply(c(1, 1L:5*10, 1L:7*100), function(m1) {
   names(res) <- paste0("m2.", c(1, 1L:5*10, 1L:7*100))
   res
 })
+
+names(sim_dat) <- paste0("m1.", c(1, 1L:5*10, 1L:7*100))
