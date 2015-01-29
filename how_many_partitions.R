@@ -1,5 +1,5 @@
 library(dpcR)
-library(pblapply)
+library(pbapply)
 
 dpcr_size = 20000L
 
