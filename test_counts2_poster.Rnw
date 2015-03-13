@@ -97,7 +97,7 @@ Cottbus--Senftenberg, Germany}
           \parbox[t][\columnheight]{\textwidth}
             {
     \begin{block}{Introduction}
-      The outcome of digital PCR (dPCR) experiments are mean copies per partition ($\lambda$). Results are derived from the measured data, an ordered (in one or two dimensions) sequence of positive partitions. The usual analysis involves assumption the template molecules are Poisson distributed among partitions. On this premise, already proposed approaches, based on the confidence intervals~\shortcite{dube_mathematical_2008} or uncertainty quantification~\shortcite{bhat_single_2009}, allow comparing experiments. 
+     quantification~\shortcite{bretz_2010}, allow comparing experiments. 
     \end{block}
     
     \vfill
@@ -144,7 +144,7 @@ plot(1L:5)
     
         \begin{block}{Avaibility}
         \footnotesize{
-      signal.hsmm web server: 
+      dpcR web server: 
       
 %       \url{http://michbur.shinyapps.io/signalhsmm/}$\begin{array}{l}
 %         \begin{figure}[ht]
@@ -165,7 +165,7 @@ plot(1L:5)
      
      
     \begin{block}{Bibliography}
-      \bibliographystyle{apacite2}
+      \bibliographystyle{apacite}
       \bibliography{dpcrcits}
     \end{block}
     \vfill
