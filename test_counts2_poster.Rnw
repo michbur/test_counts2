@@ -94,10 +94,19 @@ Cottbus--Senftenberg, Germany}
     \begin{block}{Introduction}
 The outcome of digital PCR (dPCR) experiments are mean copies per partition ($\lambda$). Results are derived from the measured data, an ordered (in one or two dimensions) sequence of positive partitions. The usual analysis involves assumption the template molecules are Poisson distributed among partitions. On this premise, already proposed approaches, based on the confidence intervals~\shortcite{dube_mathematical_2008} or uncertainty quantification~\shortcite{bhat_single_2009}, allow a comparison of experiments. 
     \end{block}
-    
     \vfill
     
-  
+    \begin{block}{Multiple testing scheme}
+    The dPCR experimentes are compared pairwise using the ratio test~\shortcite{fay_2010}. Furthermore, computed p-values are adjusted using Benjamini & Hochberg correction~\shortcite{benjamini_1995} to control family-wise error rate.
+    
+
+ these methods, there are statistical tests that could be employed to compare estimated mean copies per partition. The choice is limited is by the specificity of dPCR results. They often fall within a big data category (10k to 10Mio partitions/sample), where solutions useful for smaller data sets are no longer applicable.
+
+
+The typical multiple comparison framework requires post-hoc tests, where all experiments are tested if at least one of them yields significantly different results and subsequently compared pairwise. The other approach involves only the second step, pairwise comparisons between all experiments.
+
+    \end{block}
+    \vfill
    
     
     \begin{block}{Possible models}
