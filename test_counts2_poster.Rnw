@@ -134,7 +134,10 @@ ggplot(data=indat,aes(x= experiment,y = lambda,col = name))+
     \end{block}
     \vfill
     
-
+    \begin{block}{Simulation method}
+    The method of simulating digital PCR experiments was derived from 
+    \end{block}
+    \vfill
     
             }
         \end{minipage}
