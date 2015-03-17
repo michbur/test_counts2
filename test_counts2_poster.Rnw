@@ -111,9 +111,26 @@ The outcome of digital PCR (dPCR) experiments are mean copies per partition ($\l
    
     
     \begin{block}{Possible models}
-<<echo = FALSE,message=FALSE,results='asis'>>=
-plot(1L:5)
-@ 
+<<dube_bat, echo = FALSE, message=FALSE,fig.width=12,fig.height=11.3>>=
+load("ints_plot.RData")
+
+ggplot(data=indat,aes(x= experiment,y = lambda,col = name))+
+  geom_errorbar(aes(ymin=low,ymax=up),size=2) +
+  geom_point(shape=16, size = 6, position = position_dodge(w = 0.6, h = 0)) + 
+  geom_point(aes(y=real/765), shape=17, size = 6, colour = "black", alpha = 0.25) +
+  scale_x_discrete("Experiment name") + 
+  scale_y_continuous(expression(lambda)) + 
+  scale_color_discrete("Method name") + 
+    theme(plot.background=element_rect(fill = "transparent",colour = "transparent"),
+          axis.text.x = element_text(size=16), axis.text.y = element_text(size=16),
+          axis.title.x = element_text(size=19, vjust = -1), 
+          axis.title.y = element_text(size=19, vjust = 1),
+          legend.text = element_text(size=16), legend.title = element_text(size=19),
+          plot.title = element_text(size=27),
+          panel.background = element_rect(fill = "transparent",colour = "black"),
+          legend.direction="horizontal", legend.position = "bottom",
+          legend.background = element_rect(fill="NA"))
+@
     \end{block}
     \vfill
     
