@@ -7,6 +7,9 @@ sapply(0L:20*20, function(num_mol) {
                       n_panels = number_of_exps)
   dat <- binarize(adpcr1)
   
+  sum <- summary(dat, print = FALSE)
+  
+  
   positives <- colSums(dat > 0, na.rm = TRUE)
   total <- slot(dat, "n")
   
