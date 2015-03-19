@@ -53,8 +53,8 @@
 \renewcommand{\APACrefatitle}[2]{}
 \renewcommand{\bibliographytypesize}{\footnotesize} 
 \renewcommand{\APACrefYearMonthDay}[3]{%
-  {\BBOP}{#1}
-  {\BBCP}
+{\BBOP}{#1}
+{\BBCP}
 }
 
 \begin{document}
@@ -65,6 +65,19 @@
 library(xtable)
 library(ggplot2)
 library(reshape2)
+
+poster_theme <- theme(plot.background=element_rect(fill = "transparent",
+                                                   colour = "transparent"),
+                      axis.text.x = element_text(size=16), 
+                      axis.text.y = element_text(size=16),
+                      axis.title.x = element_text(size=19, vjust = -1), 
+                      axis.title.y = element_text(size=19, vjust = 1),
+                      legend.text = element_text(size=16), 
+                      legend.title = element_text(size=19),
+                      plot.title = element_text(size=27),
+                      panel.background = element_rect(fill = "transparent",colour = "black"),
+                      legend.direction="horizontal", legend.position = "bottom",
+                      legend.background = element_rect(fill="NA"))
 @
 
 
@@ -85,32 +98,47 @@ Cottbus--Senftenberg, Germany}
 \title{\huge Methods of Comparing Digital PCR Experiments}
 
 \begin{frame}
-  \begin{columns}
-    \begin{column}{.44\textwidth}
-      \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-        \begin{minipage}[T]{.95\textwidth}
-          \parbox[t][\columnheight]{\textwidth}
-            {
-    \begin{block}{Introduction}
+\begin{columns}
+\begin{column}{.44\textwidth}
+\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+\begin{minipage}[T]{.95\textwidth}
+\parbox[t][\columnheight]{\textwidth}
+{
+\begin{block}{Introduction}
 The outcome of digital PCR (dPCR) experiments are mean copies per partition ($\lambda$). Results are derived from the measured data, an ordered (in one or two dimensions) sequence of positive partitions. The usual analysis involves assumption the template molecules are Poisson distributed among partitions. On this premise, already proposed approaches, based on the confidence intervals~\citep{dube_mathematical_2008} or uncertainty quantification~\citep{bhat_single_2009}, allow a comparison of experiments. 
-    \end{block}
-    \vfill
-    
-    \begin{block}{Multiple testing scheme}
-    The dPCR experimentes are compared pairwise using the uniformly most powerful (UMP) ratio test~\citep{fay_2010}. Furthermore, computed p-values are adjusted using Benjamini & Hochberg correction~\citep{benjamini_1995} to control family-wise error rate.
-    
-    The UMP ratio test has following null-hypothesis:
-    \begin{equation}
-    H_0: \frac{\lambda_1}{\lambda_2} = 1
-    \end{equation}
-    
-    
-    The Wilson's confidence intervals~\citep{brown_2001} are calculated independently for every dPCR experiment. The Dunn -– \v{S}id\'{a}k correction ensures control of the family-wise error rate.
-    \end{block}
-    \vfill
-   
-    
-    \begin{block}{Possible models}
+\end{block}
+\vfill
+
+\begin{block}{GLM testing scheme}
+Generalized Linear Models (GLM) are linear models for data, where the response variables may have non-normal distributions (as binomially distributed positive partitions in digital PCR experiments). We propose a model reflecting relationships in results of digital PCR as given by:
+\begin{equation}
+\log{Y} = \beta^T X
+\end{equation}
+where $Y$ are counts, $X$ are experiments names (categorical data) and $\beta$ are linear model coefficients for every experiment. Moreover, $\exp{\beta} = \lambda$.   
+Estimated means copies per partitions obtained from the model are compared each other using multiple t-test~\citep{bretz_2010}.
+The linear model above can be used only when the concentration of template molecules in samples is small (positive partitions contain very rarely more than 1 template particle). Higher concentrations basically requires binomial regression.
+
+\end{block}
+\vfill
+
+
+\begin{block}{Multiple testing scheme}
+The dPCR experimentes are compared pairwise using the uniformly most powerful (UMP) ratio test~\citep{fay_2010}. Furthermore, computed p-values are adjusted using Benjamini & Hochberg correction~\citep{benjamini_1995} to control family-wise error rate.
+
+The UMP ratio test has following null-hypothesis:
+\begin{equation}
+H_0: \frac{\lambda_1}{\lambda_2} = 1
+\end{equation}
+
+
+The Wilson's confidence intervals~\citep{brown_2001} are calculated independently for every dPCR experiment. The Dunn -– \v{S}id\'{a}k correction ensures control of the family-wise error rate.
+\end{block}
+\vfill
+
+
+\begin{block}{Model evaluation}
+Two approaches above were compared in a simulation approach.
+
 <<dube_bat, echo = FALSE, message=FALSE,fig.width=12,fig.height=11.3>>=
 load("ints_plot.RData")
 
@@ -120,84 +148,97 @@ ggplot(data=indat,aes(x= experiment,y = lambda,col = name))+
   geom_point(aes(y=real/765), shape=17, size = 6, colour = "black", alpha = 0.25) +
   scale_x_discrete("Experiment name") + 
   scale_y_continuous(expression(lambda)) + 
-  scale_color_discrete("Method name") + 
-    theme(plot.background=element_rect(fill = "transparent",colour = "transparent"),
-          axis.text.x = element_text(size=16), axis.text.y = element_text(size=16),
-          axis.title.x = element_text(size=19, vjust = -1), 
-          axis.title.y = element_text(size=19, vjust = 1),
-          legend.text = element_text(size=16), legend.title = element_text(size=19),
-          plot.title = element_text(size=27),
-          panel.background = element_rect(fill = "transparent",colour = "black"),
-          legend.direction="horizontal", legend.position = "bottom",
-          legend.background = element_rect(fill="NA"))
+  scale_color_discrete("Method name:") + 
+  poster_theme
 @
-    \end{block}
-    \vfill
-    
-    \begin{block}{Simulation method}
-    Source of the method of simulating digital PCR experiments (cite Bart) 
-    \end{block}
-    \vfill
-    
-            }
-        \end{minipage}
-      \end{beamercolorbox}
-    \end{column}
-    
-    
-%new column ------------------------------------------------------    
-    
-    \begin{column}{.53\textwidth}
-      \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-        \begin{minipage}[T]{.95\textwidth}  
-          \parbox[t][\columnheight]{\textwidth}
-            {
-            
-       
-    \begin{block}{Evaluation}
-    stuff stuff stuff
-    \end{block}
-    \vfill    
-    
-        
-    
-     
-    \begin{block}{Summary}
+\end{block}
+\vfill
 
-    \end{block}
-    \vfill 
-    
-        \begin{block}{Avaibility}
-        \footnotesize{
-      dpcR web server: 
-      
-%       \url{http://michbur.shinyapps.io/signalhsmm/}$\begin{array}{l}
-%         \begin{figure}[ht]
-%         \centering
-%         \scalebox{0.3}{
-%           \includegraphics{qrsignalhsmm.png}
-%         }
-%         \end{figure}
-%       \end{array}
-%       $
-      
-      dpcR R package: 
-      
-      \url{http://cran.r-project.org/web/packages/dpcR/}
-        }
-    \end{block}
-    \vfill 
-     
-     
-    \begin{block}{Bibliography}
-      \bibliographystyle{apalike}
-      \bibliography{dpcrcits}
-    \end{block}
-    \vfill
-            }
-        \end{minipage}
-      \end{beamercolorbox}
-    \end{column}
-  \end{columns}  
+\begin{block}{Simulations}
+All in-silico experiments were performed using newest method of simulating digital PCR data~\citep{jacobs_2014}.
+\end{block}
+\vfill
+
+}
+\end{minipage}
+\end{beamercolorbox}
+\end{column}
+
+
+%new column ------------------------------------------------------    
+
+\begin{column}{.53\textwidth}
+\begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+\begin{minipage}[T]{.95\textwidth}  
+\parbox[t][\columnheight]{\textwidth}
+{
+
+
+\begin{block}{Evaluation}
+stuff stuff stuff
+\end{block}
+\vfill    
+
+\begin{block}{Probability coverage of confidence intervals}
+
+  Covarage probability is the proportion of the time that the interval contains the true value of $\lambda$.
+  
+<<coverage, echo = FALSE, message=FALSE,fig.width=14,fig.height=11.3>>=
+load("coverage.RData")
+
+ggplot(m_coverage, aes(x = prop, y = coverage, fill = method)) +
+  geom_bar(stat="identity", position = "dodge") +
+  scale_y_continuous("Probability coverage") + 
+  scale_x_discrete(expression(lambda)) +
+  scale_fill_discrete("Confidence intervals:") + 
+  geom_hline(y = 0.95, colour = "blue", size = 2, linetype = 5) +
+  poster_theme
+  @
+
+The dashed blue line marks 0.95 border.
+  
+  \end{block}
+  \vfill
+  
+  
+  \begin{block}{Summary}
+  
+  \end{block}
+  \vfill 
+  
+  \begin{block}{Avaibility}
+  \footnotesize{
+  dpcR web server: 
+  
+  %       \url{http://michbur.shinyapps.io/signalhsmm/}$\begin{array}{l}
+  %         \begin{figure}[ht]
+  %         \centering
+  %         \scalebox{0.3}{
+  %           \includegraphics{qrsignalhsmm.png}
+  %         }
+  %         \end{figure}
+  %       \end{array}
+  %       $
+  
+  dpcR R package: 
+  
+  \url{http://cran.r-project.org/web/packages/dpcR/}
+  }
+  \end{block}
+  \vfill 
+  
+  
+  \begin{block}{Bibliography}
+  \tiny{
+  \bibliographystyle{apalike}
+  \bibliography{dpcrcits}
+  }
+  \end{block}
+  \vfill
+}
+\end{minipage}
+\end{beamercolorbox}
+\end{column}
+\end{columns}  
 \end{frame}
 \end{document}
