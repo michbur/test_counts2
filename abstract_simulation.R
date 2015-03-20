@@ -1,7 +1,8 @@
 library(dpcR)
 library(pbapply)
 
-sim_res <- pbsapply(1L:300, function(dummy) {
+#copmarision of adpcr seting
+adpcr_comp <- pbsapply(1L:2, function(dummy) {
   sim_dat2 <- lapply(1L:10*10, function(m1) {
     m2_vector <- m1 + 1L:5*10
     res <- lapply(m2_vector, function(m2) {   

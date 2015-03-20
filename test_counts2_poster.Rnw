@@ -82,13 +82,13 @@ poster_theme <- theme(plot.background=element_rect(fill = "transparent",
 
 
 \date{}
-\author{Micha\l{}‚  Burdukiewicz\inst{1}, Piotr Sobczyk\inst{2}, Pawe\l{}‚ Mackiewicz\inst{1}, Stefan R{\"o}diger\inst{3}}
+\author{Micha\l{}  Burdukiewicz\inst{1}, Piotr Sobczyk\inst{2}, Pawe\l{} Mackiewicz\inst{1}, Stefan R{\"o}diger\inst{3}}
 
-\institute{\textsuperscript{1}University of Wroc\l{}‚aw, Department of Genomics, Poland 
+\institute{\textsuperscript{1}University of Wroc\l{}?aw, Department of Genomics, Poland 
 
 \vspace{0.5cm}
 
-\textsuperscript{2}Wroc\l{}‚aw University of Technology, Institute of Mathematics and Computer Science, Poland
+\textsuperscript{2}Wroc\l{}aw University of Technology, Institute of Mathematics and Computer Science, Poland
 
 \vspace{0.5cm}
 
@@ -109,7 +109,7 @@ The outcome of digital PCR (dPCR) experiments are mean copies per partition ($\l
 \end{block}
 \vfill
 
-\begin{block}{GLM testing scheme}
+\begin{block}{GLM testing framework}
 Generalized Linear Models (GLM) are linear models for data, where the response variables may have non-normal distributions (as binomially distributed positive partitions in digital PCR experiments). We propose a model reflecting relationships in results of digital PCR as given by:
 \begin{equation}
 \log{Y} = \beta^T X
@@ -122,7 +122,7 @@ The linear model above can be used only when the concentration of template molec
 \vfill
 
 
-\begin{block}{Multiple testing scheme}
+\begin{block}{Multiple testing (MT) framework}
 The dPCR experimentes are compared pairwise using the uniformly most powerful (UMP) ratio test~\citep{fay_2010}. Furthermore, computed p-values are adjusted using Benjamini & Hochberg correction~\citep{benjamini_1995} to control family-wise error rate.
 
 The UMP ratio test has following null-hypothesis:
@@ -131,7 +131,13 @@ H_0: \frac{\lambda_1}{\lambda_2} = 1
 \end{equation}
 
 
-The Wilson's confidence intervals~\citep{brown_2001} are calculated independently for every dPCR experiment. The Dunn -– \v{S}id\'{a}k correction ensures control of the family-wise error rate.
+The Wilson's confidence intervals~\citep{brown_2001} are calculated independently for every dPCR experiment. The Dunn~--~\v{S}id\'{a}k correction ensures control of the family-wise error rate, because:
+
+\begin{equation}
+\prod_{i = 1}^{T} P(\theta_{i_L} < \theta_{i} < \theta_{i_U}) = 1 - \alpha
+\end{equation}
+
+
 \end{block}
 \vfill
 
@@ -154,10 +160,7 @@ ggplot(data=indat,aes(x= experiment,y = lambda,col = name))+
 \end{block}
 \vfill
 
-\begin{block}{Simulations}
-All in-silico experiments were performed using newest method of simulating digital PCR data~\citep{jacobs_2014}.
-\end{block}
-\vfill
+
 
 }
 \end{minipage}
@@ -183,19 +186,33 @@ stuff stuff stuff
 
   Covarage probability is the proportion of the time that the interval contains the true value of $\lambda$.
   
-<<coverage, echo = FALSE, message=FALSE,fig.width=14,fig.height=11.3>>=
+  In the example below, we simulated 1000 droplet dPCR experiments and assed probability coverage of CI obtained by three methods: Dube's~\citep{dube_mathematical_2008}, Bhat's~\citep{bhat_single_2009} and by MT for each level of $\lambda$.
+  
+<<coverage, echo = FALSE, message=FALSE,fig.width=14.7,fig.height=10>>=
 load("coverage.RData")
 
+m_coverage <- m_coverage[m_coverage[["method"]] != "Non-adjusted", ]
+m_coverage[["method"]] <- droplevels(m_coverage[["method"]])
+m_coverage[["method"]] <- factor(m_coverage[["method"]],
+                                 levels(m_coverage[["method"]])[c(1,3,2)])
 ggplot(m_coverage, aes(x = prop, y = coverage, fill = method)) +
   geom_bar(stat="identity", position = "dodge") +
   scale_y_continuous("Probability coverage") + 
   scale_x_discrete(expression(lambda)) +
   scale_fill_discrete("Confidence intervals:") + 
-  geom_hline(y = 0.95, colour = "blue", size = 2, linetype = 5) +
+  geom_hline(y = 0.95, colour = "black", size = 2, linetype = 5) +
   poster_theme
   @
 
-The dashed blue line marks 0.95 border.
+The dashed black line marks 0.95 border.
+
+<<coverage_table, echo = FALSE, message=FALSE,results='asis'>>=
+dat <- as.data.frame(aggregate(coverage ~ method, m_coverage, mean))
+colnames(dat)<- c("Method name", "Probability coverage")
+print(xtable(dat, align = c("c", "c", "|", "c")), include.rownames = FALSE)
+  @
+
+On average, Dube's confidence intervals 
   
   \end{block}
   \vfill
@@ -226,7 +243,11 @@ The dashed blue line marks 0.95 border.
   }
   \end{block}
   \vfill 
-  
+
+\begin{block}{Simulations}
+We performed all in-silico experiments using the accurete digital PCR data simulations~\citep{jacobs_2014}.
+\end{block}
+\vfill
   
   \begin{block}{Bibliography}
   \tiny{
