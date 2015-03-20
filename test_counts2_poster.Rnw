@@ -91,7 +91,7 @@ poster_theme <- theme(plot.background=element_rect(fill = "transparent",
 
 \vspace{0.5cm}
 
-\textsuperscript{2}Wroc\l{}aw University of Technology, Institute of Mathematics and Computer Science, Poland
+\textsuperscript{2}Wroc\l{}aw University of Technology, Department of Mathematics, Poland
 
 \vspace{0.5cm}
 
