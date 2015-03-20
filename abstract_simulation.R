@@ -1,8 +1,9 @@
 library(dpcR)
 library(pbapply)
+library(reshape2)
 
 #copmarision of adpcr seting
-adpcr_comp <- pbsapply(1L:2, function(dummy) {
+adpcr_comp <- pbsapply(1L:3, function(dummy) {
   sim_dat2 <- lapply(1L:10*10, function(m1) {
     m2_vector <- m1 + 1L:5*10
     res <- lapply(m2_vector, function(m2) {   
@@ -13,10 +14,8 @@ adpcr_comp <- pbsapply(1L:2, function(dummy) {
       
       compb <- test_counts(adpcrs, "binomial")
       compr <- test_counts(adpcrs, "ratio")
-      compp <- test_counts(adpcrs, "prop")
       
       lapply(list(glm = compb, 
-                  prop = compp, 
                   ratio = compr), function(single_test) as.numeric(coef(single_test)[["group"]]))
     })
     names(res) <- paste0("m2.", m2_vector)
@@ -24,7 +23,7 @@ adpcr_comp <- pbsapply(1L:2, function(dummy) {
   })
   
   names(sim_dat2) <- paste0("m1.", 1L:10*10)
-  
+  browser()
   c(mean((3 - sapply(sim_dat2, function(i)
     sapply(i, function(j) {
       sum(j[["glm"]][1L:3] != j[["glm"]][4L:6])
@@ -35,3 +34,7 @@ adpcr_comp <- pbsapply(1L:2, function(dummy) {
 })
 
 
+rownames(adpcr_comp) <- c("GLM", "MT")
+madpcr_comp <- melt(sqrt(adpcr_comp)/6)
+colnames(madpcr_comp) <- c("method", "repetition", "value")
+save(madpcr_comp, file = "adpcr_comp.RData")

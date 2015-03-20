@@ -102,7 +102,7 @@ Cottbus--Senftenberg, Germany}
 
 \begin{frame}
 \begin{columns}
-\begin{column}{.44\textwidth}
+\begin{column}{.52\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
 \begin{minipage}[T]{.95\textwidth}
 \parbox[t][\columnheight]{\textwidth}
@@ -119,7 +119,6 @@ Generalized Linear Models (GLM) are linear models for data, where the response v
 \end{equation}
 where $Y$ are counts, $X$ are experiments names (categorical data) and $\beta$ are linear model coefficients for every experiment. Moreover, $\exp{\beta} = \lambda$.   
 Estimated means copies per partitions obtained from the model are compared each other using multiple t-test~\citep{bretz_2010}.
-The linear model above can be used only when the concentration of template molecules in samples is small (positive partitions contain very rarely more than 1 template particle). Higher concentrations basically requires binomial regression.
 
 \end{block}
 \vfill
@@ -134,32 +133,42 @@ H_0: \frac{\lambda_1}{\lambda_2} = 1
 \end{equation}
 
 
-The Wilson's confidence intervals~\citep{brown_2001} are calculated independently for every dPCR experiment. The Dunn~--~\v{S}id\'{a}k correction ensures control of the family-wise error rate, because:
+The Wilson's confidence intervals~\citep{brown_2001} are calculated independently for every dPCR experiment and adjusted using Dunn~--~\v{S}id\'{a}k correction, which assumes that:
 
 \begin{equation}
-\prod_{i = 1}^{T} P(\theta_{i_L} < \theta_{i} < \theta_{i_U}) = 1 - \alpha
+\prod_{i = 1}^{T} P(\lambda_{i_L} < \lambda_{i} < \lambda_{i_U}) = 1 - \alpha
 \end{equation}
 
+where $T$ is number of experiments, $\lambda_{i_L}$ and $\lambda_{i_U}$ are lower and upper bound of confidence interval of $i$-th experiment. In this case, adjusted significance level is: 
+
+\begin{equation}
+\alpha_{\text{adj}} = 1 - (1 - \alpha)^\frac{1}{T}
+\end{equation}
+
+ Such intervals are wider then usual, but ensure that confidence intervals simultaneously contain true value of lambda.
 
 \end{block}
 \vfill
 
 
-\begin{block}{Model evaluation}
-Two approaches above were compared in a simulation approach.
+\begin{block}{Comparision of frameworks}
+Two approaches presented above were compared in a simulation approach over 150 000 simulated array dPCR experiments. Each simulation contained six reactions. Three of them had roughly the same amount of molecules per plate and other three had experiments with 10 to 50 molecules more.
+Experiments were compared using GLM and MT frameworks.
 
-<<dube_bat, echo = FALSE, message=FALSE,fig.width=12,fig.height=11.3>>=
-load("ints_plot.RData")
+<<dube_bat, echo = FALSE, message=FALSE,fig.width=14,fig.height=9.7>>=
+load("adpcr_comp.RData")
 
-ggplot(data=indat,aes(x= experiment,y = lambda,col = name))+
-  geom_errorbar(aes(ymin=low,ymax=up),size=2) +
-  geom_point(shape=16, size = 6, position = position_dodge(w = 0.6, h = 0)) + 
-  geom_point(aes(y=real/765), shape=17, size = 6, colour = "black", alpha = 0.25) +
-  scale_x_discrete("Experiment name") + 
-  scale_y_continuous(expression(lambda)) + 
-  scale_color_discrete("Method name:") + 
+ggplot(data=madpcr_comp,aes(x = value, fill = method)) +
+  geom_density(alpha = 0.3) + 
+  scale_fill_discrete("Confidence intervals:") + 
+  scale_y_continuous("Density") + 
+  scale_x_continuous("Fraction of wrongly assigned experiments") + 
   poster_theme
 @
+
+On average, 2.03 and 1.98 reactions were assessed to a wrong group by respectively GLM and multiple proportion test.
+
+
 \end{block}
 \vfill
 
@@ -173,7 +182,7 @@ ggplot(data=indat,aes(x= experiment,y = lambda,col = name))+
 
 %new column ------------------------------------------------------    
 
-\begin{column}{.53\textwidth}
+\begin{column}{.46\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
 \begin{minipage}[T]{.95\textwidth}  
 \parbox[t][\columnheight]{\textwidth}
@@ -191,7 +200,7 @@ ggplot(data=indat,aes(x= experiment,y = lambda,col = name))+
   To assess simultaneous coverage probability, we randomly divided experiments into 2000 groups (500 experiments each) for each possible value of $\lambda$. We counted frequency of groups in which all confidence intervals contain the true value of $\lambda$.
   
   
-<<coverage, echo = FALSE, message=FALSE,fig.width=14.7,fig.height=10>>=
+<<coverage, echo = FALSE, message=FALSE,fig.width=13,fig.height=10.8>>=
 load("coverage_poster.RData")
 
 
@@ -221,12 +230,20 @@ print(xtable(dat, align = c("c", "|", "c", "|", "c", "|", "c", "|")),
   
   \begin{block}{Summary}
   \begin{itemize}
-  \item The adjusted confidence intervals computed by MT guarantee 0.95 simultaneous coverage probability.
+  \item Multiple ratio tests framework is able to accurately assess $\lambda$ and on this ground assign dPCR experiments to different groups.
+  \item The MT approach is many orders of magnitude faster than GLM and can be used in the analysis of huge droplet dPCR data sets.
+  \item The adjusted confidence intervals computed by MT guarantee stable 0.95 simultaneous coverage probability, which offers more reliable comparision of repeated experiments.
   \end{itemize}
   \end{block}
   \vfill 
   
-  \begin{block}{Avaibility}
+  \begin{block}{Simulations}
+We performed all in-silico experiments using the novel digital PCR data simulation~\citep{jacobs_2014}.
+\end{block}
+\vfill
+  
+  
+  \begin{block}{Avaibility and funding}
   \footnotesize{
   pcRuniveRsum: 
   
@@ -244,13 +261,10 @@ print(xtable(dat, align = c("c", "|", "c", "|", "c", "|", "c", "|")),
   
   \url{http://cran.r-project.org/web/packages/dpcR/}
   }
+  
+  This research was partially funded by KNOW Consortium.
   \end{block}
   \vfill 
-
-\begin{block}{Simulations}
-We performed all in-silico experiments using the accurate digital PCR data simulations~\citep{jacobs_2014}.
-\end{block}
-\vfill
   
   \begin{block}{Bibliography}
   \tiny{
