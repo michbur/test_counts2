@@ -57,6 +57,8 @@
 {\BBCP}
 }
 
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+
 \begin{document}
 
 
@@ -72,6 +74,7 @@ poster_theme <- theme(plot.background=element_rect(fill = "transparent",
                       axis.text.y = element_text(size=16),
                       axis.title.x = element_text(size=19, vjust = -1), 
                       axis.title.y = element_text(size=19, vjust = 1),
+                      strip.text = element_text(size=19),
                       legend.text = element_text(size=16), 
                       legend.title = element_text(size=19),
                       plot.title = element_text(size=27),
@@ -84,7 +87,7 @@ poster_theme <- theme(plot.background=element_rect(fill = "transparent",
 \date{}
 \author{Micha\l{}  Burdukiewicz\inst{1}, Piotr Sobczyk\inst{2}, Pawe\l{} Mackiewicz\inst{1}, Stefan R{\"o}diger\inst{3}}
 
-\institute{\textsuperscript{1}University of Wroc\l{}?aw, Department of Genomics, Poland 
+\institute{\textsuperscript{1}University of Wroc\l{}aw, Department of Genomics, Poland 
 
 \vspace{0.5cm}
 
@@ -177,65 +180,65 @@ ggplot(data=indat,aes(x= experiment,y = lambda,col = name))+
 {
 
 
-\begin{block}{Evaluation}
-stuff stuff stuff
-\end{block}
-\vfill    
+
 
 \begin{block}{Probability coverage of confidence intervals}
 
-  Covarage probability is the proportion of the time that the interval contains the true value of $\lambda$.
+  Average covarage probability is the proportion of the time that the interval contains the true value of $\lambda$.
   
-  In the example below, we simulated 1000 droplet dPCR experiments and assed probability coverage of CI obtained by three methods: Dube's~\citep{dube_mathematical_2008}, Bhat's~\citep{bhat_single_2009} and by MT for each level of $\lambda$.
+  In the example below, we simulated 1\e{6} droplet dPCR experiments (2\e{4} droplets each) for each level of $\lambda$ (1.2\e{7} experiments total). We computed average probability coverage of CI obtained by three methods: Dube's~\citep{dube_mathematical_2008}, Bhat's~\citep{bhat_single_2009} and by MT.
+  
+  To assess simultaneous coverage probability, we randomly divided experiments into 2000 groups (500 experiments each) for each possible value of $\lambda$. We counted frequency of groups in which all confidence intervals contain the true value of $\lambda$.
+  
   
 <<coverage, echo = FALSE, message=FALSE,fig.width=14.7,fig.height=10>>=
-load("coverage.RData")
+load("coverage_poster.RData")
 
-m_coverage <- m_coverage[m_coverage[["method"]] != "Non-adjusted", ]
-m_coverage[["method"]] <- droplevels(m_coverage[["method"]])
-m_coverage[["method"]] <- factor(m_coverage[["method"]],
-                                 levels(m_coverage[["method"]])[c(1,3,2)])
-ggplot(m_coverage, aes(x = prop, y = coverage, fill = method)) +
+
+
+ggplot(m_coverage2, aes(x = prop, y = value, fill = method)) +
   geom_bar(stat="identity", position = "dodge") +
   scale_y_continuous("Probability coverage") + 
   scale_x_discrete(expression(lambda)) +
   scale_fill_discrete("Confidence intervals:") + 
   geom_hline(y = 0.95, colour = "black", size = 2, linetype = 5) +
+  facet_wrap(~ coverage, nrow = 2) + 
   poster_theme
   @
 
 The dashed black line marks 0.95 border.
 
 <<coverage_table, echo = FALSE, message=FALSE,results='asis'>>=
-dat <- as.data.frame(aggregate(coverage ~ method, m_coverage, mean))
-colnames(dat)<- c("Method name", "Probability coverage")
-print(xtable(dat, align = c("c", "c", "|", "c")), include.rownames = FALSE)
-  @
+dat <- as.data.frame(aggregate(value ~ method + coverage, m_coverage2, mean))
 
-On average, Dube's confidence intervals 
-  
+colnames(dat) <- c("Method name", "Type of coverage", "Value")
+print(xtable(dat, align = c("c", "|", "c", "|", "c", "|", "c", "|")), 
+      include.rownames = FALSE)
+  @
   \end{block}
   \vfill
   
   
   \begin{block}{Summary}
-  
+  \begin{itemize}
+  \item The adjusted confidence intervals computed by MT guarantee 0.95 simultaneous coverage probability.
+  \end{itemize}
   \end{block}
   \vfill 
   
   \begin{block}{Avaibility}
   \footnotesize{
-  dpcR web server: 
+  pcRuniveRsum: 
   
-  %       \url{http://michbur.shinyapps.io/signalhsmm/}$\begin{array}{l}
-  %         \begin{figure}[ht]
-  %         \centering
-  %         \scalebox{0.3}{
-  %           \includegraphics{qrsignalhsmm.png}
-  %         }
-  %         \end{figure}
-  %       \end{array}
-  %       $
+        \url{http://michbur.github.io/pcRuniveRsum/}$\begin{array}{l}
+          \begin{figure}[ht]
+          \centering
+          \scalebox{0.3}{
+            \includegraphics{qr.png}
+          }
+          \end{figure}
+        \end{array}
+        $
   
   dpcR R package: 
   
@@ -245,7 +248,7 @@ On average, Dube's confidence intervals
   \vfill 
 
 \begin{block}{Simulations}
-We performed all in-silico experiments using the accurete digital PCR data simulations~\citep{jacobs_2014}.
+We performed all in-silico experiments using the accurate digital PCR data simulations~\citep{jacobs_2014}.
 \end{block}
 \vfill
   
