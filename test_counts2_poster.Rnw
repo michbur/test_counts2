@@ -102,7 +102,7 @@ Cottbus--Senftenberg, Germany}
 
 \begin{frame}
 \begin{columns}
-\begin{column}{.52\textwidth}
+\begin{column}{.49\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
 \begin{minipage}[T]{.95\textwidth}
 \parbox[t][\columnheight]{\textwidth}
@@ -177,7 +177,7 @@ A single GLM comparison took roughly 183 times longer than MT (on average 1.10 s
 
 %new column ------------------------------------------------------    
 
-\begin{column}{.46\textwidth}
+\begin{column}{.49\textwidth}
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
 \begin{minipage}[T]{.95\textwidth}  
 \parbox[t][\columnheight]{\textwidth}
