@@ -133,13 +133,7 @@ H_0: \frac{\lambda_1}{\lambda_2} = 1
 \end{equation}
 
 
-The Wilson's confidence intervals~\citep{brown_2001} are calculated independently for every dPCR experiment and adjusted using Dunn~--~\v{S}id\'{a}k correction, which assumes that:
-
-\begin{equation}
-\prod_{i = 1}^{T} P(\lambda_{i_L} < \lambda_{i} < \lambda_{i_U}) = 1 - \alpha
-\end{equation}
-
-where $T$ is number of experiments, $\lambda_{i_L}$ and $\lambda_{i_U}$ are lower and upper bound of confidence interval of $i$-th experiment. In this case, adjusted significance level is: 
+The Wilson's confidence intervals~\citep{brown_2001} are calculated independently for every dPCR experiment and adjusted using Dunn~--~\v{S}id\'{a}k correction, where:
 
 \begin{equation}
 \alpha_{\text{adj}} = 1 - (1 - \alpha)^\frac{1}{T}
@@ -155,7 +149,7 @@ where $T$ is number of experiments, $\lambda_{i_L}$ and $\lambda_{i_U}$ are lowe
 Two approaches presented above were compared in a simulation approach over 150 000 simulated array dPCR experiments. Each simulation contained six reactions. Three of them had roughly the same amount of molecules per plate and other three had experiments with 10 to 50 molecules more.
 Experiments were compared using GLM and MT frameworks.
 
-<<dube_bat, echo = FALSE, message=FALSE,fig.width=14,fig.height=9.7>>=
+<<dube_bat, echo = FALSE, message=FALSE,fig.width=14,fig.height=10.5>>=
 load("adpcr_comp.RData")
 
 ggplot(data=madpcr_comp,aes(x = value, fill = method)) +
@@ -166,11 +160,12 @@ ggplot(data=madpcr_comp,aes(x = value, fill = method)) +
   poster_theme
 @
 
-On average, 2.03 and 1.98 reactions were assessed to a wrong group by respectively GLM and multiple proportion test.
+On average, 2.03 and 1.98 reactions were assessed to a wrong group by respectively GLM and MT.
 
-
+A single GLM comparison took roughly 183 times longer than MT (on average 1.10 seconds versus 0.006 seconds on the Intel i7-2600 processor). The difference growths with the number of experiments and number of partitions (data not shown).
 \end{block}
 \vfill
+
 
 
 
@@ -195,7 +190,7 @@ On average, 2.03 and 1.98 reactions were assessed to a wrong group by respective
 
   Average covarage probability is the proportion of the time that the interval contains the true value of $\lambda$.
   
-  In the example below, we simulated 1\e{6} droplet dPCR experiments (2\e{4} droplets each) for each level of $\lambda$ (1.2\e{7} experiments total). We computed average probability coverage of CI obtained by three methods: Dube's~\citep{dube_mathematical_2008}, Bhat's~\citep{bhat_single_2009} and by MT.
+  In the example below, we simulated 1\e{6} droplet dPCR experiments (2\e{4} droplets each) for each level of $\lambda$ (1.2\e{7} experiments total). We computed average probability coverage of CI obtained by three methods: Dube's~\citep{dube_mathematical_2008}, Bhat's~\citep{bhat_single_2009} and by MT ($\alpha = 0.95$).
   
   To assess simultaneous coverage probability, we randomly divided experiments into 2000 groups (500 experiments each) for each possible value of $\lambda$. We counted frequency of groups in which all confidence intervals contain the true value of $\lambda$.
   
@@ -230,17 +225,12 @@ print(xtable(dat, align = c("c", "|", "c", "|", "c", "|", "c", "|")),
   
   \begin{block}{Summary}
   \begin{itemize}
-  \item Multiple ratio tests framework is able to accurately assess $\lambda$ and on this ground assign dPCR experiments to different groups.
-  \item The MT approach is many orders of magnitude faster than GLM and can be used in the analysis of huge droplet dPCR data sets.
-  \item The adjusted confidence intervals computed by MT guarantee stable 0.95 simultaneous coverage probability, which offers more reliable comparision of repeated experiments.
+  \item Both GLM and MT frameworks are able to accurately assess $\lambda$ and on this ground assign dPCR experiments to different groups.
+  \item The MT approach is much faster than GLM and can be used in the analysis of huge droplet dPCR data sets.
+  \item The adjusted confidence intervals computed by MT guarantee stable 0.95 simultaneous coverage probability, which offers more reliable comparision of technical repeats.
   \end{itemize}
   \end{block}
   \vfill 
-  
-  \begin{block}{Simulations}
-We performed all in-silico experiments using the novel digital PCR data simulation~\citep{jacobs_2014}.
-\end{block}
-\vfill
   
   
   \begin{block}{Avaibility and funding}
@@ -265,6 +255,11 @@ We performed all in-silico experiments using the novel digital PCR data simulati
   This research was partially funded by KNOW Consortium.
   \end{block}
   \vfill 
+  
+    \begin{block}{Simulations}
+We performed all in-silico experiments using the novel digital PCR data simulation~\citep{jacobs_2014}.
+\end{block}
+\vfill
   
   \begin{block}{Bibliography}
   \tiny{
